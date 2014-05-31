@@ -14,38 +14,77 @@ import org.apache.thrift.transport.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tariel.jsonconfig.JsonConfig;
 
 /**
  * Hello world!
  *
  */
-public class App 
-{
-    public static void main( String[] args )
-    {   	
-//	String[] tokens = new String[18];
-//	tokens[0] = "1\tPierre\t_\tNNP\tNNP\t_";
-//	tokens[1] = "2\tVinken\t_\tNNP\tNNP\t_";
-//	tokens[2] = "3\t,\t_\t,\t,\t_";
-//	tokens[3] = "4\t61\t_\tCD\tCD\t_";
-//	tokens[4] = "5\tyears\t_\tNNS\tNNS\t_";
-//	tokens[5] = "6\told\t_\tJJ\tJJ\t_";
-//	tokens[6] = "7\t,\t_\t,\t,\t_";
-//	tokens[7] = "8\twill\t_\tMD\tMD\t_";
-//	tokens[8] = "9\tjoin\t_\tVB\tVB\t_";
-//	tokens[9] = "10\tthe\t_\tDT\tDT\t_";
-//	tokens[10] = "11\tboard\t_\tNN\tNN\t_";
-//	tokens[11] = "12\tas\t_\tIN\tIN\t_";
-//	tokens[12] = "13\ta\t_\tDT\tDT\t_";
-//	tokens[13] = "14\tnonexecutive\t_\tJJ\tJJ\t_";
-//	tokens[14] = "15\tdirector\t_\tNN\tNN\t_";
-//	tokens[15] = "16\tNov.\t_\tNNP\tNNP\t_";
-//	tokens[16] = "17\t29\t_\tCD\tCD\t_";
-//	tokens[17] = "18\t.\t_\t.\t.\t_";	
+public class App {
+
+    private static Logger log = LoggerFactory.getLogger(App.class);
+
+    public static class ServerThread implements Runnable {
+
+        private Integer port;
+        private final int THREAD_POOL_SIZE = 10;
+        private final Boolean BLOCK = false;
+
+        @SuppressWarnings("rawtypes")
+        public ServerThread(ParseServer.Processor processor, Integer portNum) {
+            port = portNum;
+        }
+
+        public void run() {
+            try {
+                if (BLOCK) {
+                    // Initialize the transport socket
+                    TServerTransport serverTransport = new TServerSocket(port);
+                    TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
+                    args.maxWorkerThreads(THREAD_POOL_SIZE);
+                    args.processor(processor);
+                    args.executorService(new ScheduledThreadPoolExecutor(THREAD_POOL_SIZE));
+                    TServer server = new TThreadPoolServer(args);
+                    server.serve();
+                    log.info("server in running on port "+JsonConfig.get("server").get("port").asStr());
+                } else {
+
+                    // From https://github.com/m1ch1/mapkeeper/blob/eb798bb94090c7366abc6b13142bf91e4ed5993b/stubjava/StubServer.java#L93
+                    TNonblockingServerTransport trans = new TNonblockingServerSocket(port);
+                    TThreadedSelectorServer.Args args = new TThreadedSelectorServer.Args(trans);
+                    args.transportFactory(new TFramedTransport.Factory());
+                    args.protocolFactory(new TBinaryProtocol.Factory());
+                    args.processor(processor);
+                    args.selectorThreads(4);
+                    args.workerThreads(32);
+                    TServer server = new TThreadedSelectorServer(args);
+                    log.info("Server in running on port "+JsonConfig.get("server").get("port").asStr());
+                    server.serve();
+                }
+
+            } catch (Exception e) {
+                log.error("Some error");
+                e.printStackTrace();
+            }
+        }
     }
-    
-    public App()
-    {
-	
+
+    public static ServiceImpl handler;
+    public static ParseServer.Processor processor;
+
+    public static void main(String[] args) {
+        JsonConfig.init("application.conf");
+        log.info("Config loaded");
+
+        //org.apache.log4j.BasicConfigurator.configure();
+        try {
+            handler = new ServiceImpl();
+            processor = new ParseServer.Processor(handler);
+            Runnable r = new ServerThread(processor, JsonConfig.get("server").get("port").asInt());
+            new Thread(r).start();
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
     }
+
 }
