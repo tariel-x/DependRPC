@@ -1,7 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2014 Nikita Gerasimov <tariel-x@ya.ru>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package org.tariel.dependrpc;
@@ -23,34 +35,39 @@ import org.tariel.jsonconfig.JsonConfig;
 
 
 /**
- *
+ * RPC Implementation
  * @author Nikita Gerasimov <tariel-x@ya.ru>
  */
 public class ServiceImpl implements ParseServer.Iface
 {
     private static Logger log = LoggerFactory.getLogger(App.class);
     
-    ConcurrentMaltParserModel model = null;
-    
+    /**
+     * Models container
+     */
+    private ModelsContainer Models = null;
+        
     public ServiceImpl()
     {
-	try 
-	{
-		URL swemaltMiniModelURL = new File("model/engmalt.linear-1.7.mco").toURI().toURL();
-		model = ConcurrentMaltParserService.initializeParserModel(swemaltMiniModelURL);
-	} catch (Exception e) 
-	{
-		e.printStackTrace();
-	}
-	System.out.println( "Loaded model" );
+	Models = new ModelsContainer();
     }
     
+    /**
+     * Returns server information
+     * @return list with server info
+     */
     @Override
     public List<String> getServerInfo()
     {
 	return new ArrayList<String>();
     }
     
+    /**
+     * Parse text into sentence structure
+     * @param language sentence language
+     * @param text one sentence
+     * @return list of CoNLL strings
+     */
     @Override 
     public List<String> ParseText(String language, List<String> text)
     {
@@ -58,13 +75,14 @@ public class ServiceImpl implements ParseServer.Iface
 	//ConcurrentDependencyGraph outputGraph = null;
 	String[] outputTokens = null;
 	try {
-		outputTokens = model.parseTokens(tokens);
+		outputTokens = Models.getModel(language).parseTokens(tokens);
 		
 		//outputGraph = model.parse(tokens);
 		//System.out.println(outputGraph);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
+	log.info("Parser sentence, language: " + language);
 	return Arrays.asList(outputTokens);
 	//ConcurrentUtils.printTokens(outputTokens);
     }

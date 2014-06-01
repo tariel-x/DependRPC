@@ -3,5 +3,9 @@
 	{
 		"port" : 1222,
 		"threads" : 5
+	},
+	"models" : 
+	{
+		"english" : "model/engmalt.linear-1.7.mco"
 	}
 }
