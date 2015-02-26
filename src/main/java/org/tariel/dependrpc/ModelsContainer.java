@@ -38,7 +38,7 @@ import org.tariel.jsonconfig.JsonConfig;
  */
 public class ModelsContainer
 {
-    private static Logger log = LoggerFactory.getLogger(App.class);
+    private static Logger log = LoggerFactory.getLogger(ModelsContainer.class);
     
     private Map<String, ConcurrentMaltParserModel> Models = null;
     

@@ -40,7 +40,7 @@ import org.tariel.jsonconfig.JsonConfig;
  */
 public class ServiceImpl implements ParseServer.Iface
 {
-    private static Logger log = LoggerFactory.getLogger(App.class);
+    private static Logger log = LoggerFactory.getLogger(ServiceImpl.class);
     
     /**
      * Models container
