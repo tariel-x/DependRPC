@@ -18,6 +18,11 @@
 package org.tariel.dependrpc.pos;
 
 import java.io.*;
+import java.util.*;
+
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.IWord;
@@ -52,27 +57,106 @@ public class JMystem implements IPos
 
     public ISentence parseSentence(String sentence)
     {
-	try
-	{
-	    Process process = new ProcessBuilder(this.executable, "-i", "--format=json", "goodfox.in").start();
+	String readyJson = new String();
+	try {
+	    Process process = new ProcessBuilder("./mystem", "-i", "--format=json").start();
 	    InputStream is = process.getInputStream();
 	    OutputStream os = process.getOutputStream();
 	    InputStreamReader isr = new InputStreamReader(is, "UTF-8");
 	    OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 	    BufferedWriter bw = new BufferedWriter(osw);
 	    BufferedReader br = new BufferedReader(isr);
-	    bw.write(sentence);
-	    String line;
+	    bw.write("Эта хорошая лиса.");
+	    bw.close();
+	    String line = new String();
 
-	    while ((line = br.readLine()) != null)
-	    {
+	    while ((line = br.readLine()) != null) {
+		if (!line.isEmpty()) {
+		    readyJson = line;
+		}
 		System.out.println(line);
 	    }
 
-	} catch (IOException ex)
-	{
+	} catch (IOException ex) {
 	    ex.printStackTrace();
 	}
+	List<JsonWord> sent = this.processJsonOutput(readyJson);
+	return this.createSentence(sent);
+    }
+    
+    /**
+     * Converts temp words list into ISentence
+     * @param sent List<JsonWord> list of parsed words from mystem
+     * @return ISentence ready sentence
+     */
+    private ISentence createSentence(List<JsonWord> sent)
+    {
 	return null;
     }
+
+    /**
+     * Parses mystem output into temp word instances
+     * @param in Mystem JSON Sentence
+     * @return List<JsonWord> words
+     */
+    private List<JsonWord> processJsonOutput(String in)
+    {
+	JsonParser Unserializer_ = new JsonParser();
+	JsonElement element = Unserializer_.parse(in);
+	JsonArray arr = element.getAsJsonArray();
+
+	List<JsonWord> words = new ArrayList<JsonWord>();
+
+	for (JsonElement analysis : arr)
+	{
+	    JsonWord tmpWord = new JsonWord();
+	    for (Map.Entry<String, JsonElement> entry : analysis.getAsJsonObject().entrySet())
+	    {
+		if (entry.getKey().equals("analysis"))
+		{
+		    if (entry.getValue().getAsJsonArray().size() > 0)
+		    {
+			tmpWord.analysis = new JsonAnalysis();
+			Set<Map.Entry<String, JsonElement>> analysis_parts = entry.getValue()
+				.getAsJsonArray()
+				.get(0)
+				.getAsJsonObject()
+				.entrySet();
+			for (Map.Entry<String, JsonElement> part : analysis_parts)
+			{
+			    if (part.getKey().equals("lex"))
+			    {
+				tmpWord.analysis.lex = part.getValue().getAsString();
+			    } else
+			    {
+				tmpWord.analysis.gr = part.getValue().getAsString();
+			    }
+			}
+		    }
+		} else
+		{
+		    tmpWord.text = entry.getValue().getAsString();
+		}
+	    }
+	    words.add(tmpWord);
+	}
+
+	return words;
+    }
+}
+
+/**
+ * Analysis output structure of mystem
+ * @author Nikita Gerasimov <n@tariel.ru>
+ */
+class JsonAnalysis
+{
+    public String lex;
+    public String gr;
+}
+
+class JsonWord
+{
+    public JsonAnalysis analysis;
+    public String text;
 }
