@@ -15,28 +15,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package org.tariel.dependrpc.containers;
 
+import java.util.List;
+
 /**
- * 
+ *
  * @author Nikita Gerasimov <n@tariel.ru>
  */
-public interface ISentence {
+public interface ISentence
+{
+
     /**
      * Adds word to the end of sentence
-     * @param word 
+     * @param word
      */
     public void appendWord(String word);
-    
+
     /**
-     * Parses sentence into POS-tagged sentence
+     * Parses sentence into words
      */
-    public void parse();
-    
+    public void parseSentence(String sentence);
+
     /**
      * Get root word of the sentence. Often is verb.
      * @return root word
      */
     public IWord getRootWord();
+    
+    /**
+     * Returns list of parsed words
+     * @return list of words
+     */
+    public List<IWord> getParsedSentence();
+    
+    /**
+     * Creates Malttab-formatted sentence string.
+     * @return malttab string
+     */
+    public String getMalttabSentence();
 }

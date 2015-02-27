@@ -18,10 +18,25 @@
 
 package org.tariel.dependrpc.pos;
 
+import org.tariel.dependrpc.containers.ISentence;
+import org.tariel.dependrpc.containers.IWord;
+
 /**
  * 
  * @author Nikita Gerasimov <n@tariel.ru>
  */
 public interface IPos {
-      
+    /**
+     * Makes word's description
+     * @param word natural language word
+     * @return 
+     */
+    public IWord parseWord(String word);
+    
+    /**
+     * Devides sentence into sequence of parsed words
+     * @param sentence
+     * @return 
+     */
+    public ISentence parseSentence(String sentence);
 }
