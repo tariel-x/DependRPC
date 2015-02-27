@@ -19,6 +19,8 @@
 package org.tariel.dependrpc.containers;
 
 import java.util.List;
+import org.tariel.dependrpc.pos.IPos;
+import org.tariel.dependrpc.pos.PosFabrique;
 
 /**
  *
@@ -26,13 +28,21 @@ import java.util.List;
  */
 public class Sentence implements ISentence
 {
+    private List<IWord> words;
+    private IPos pos;
+    
+    public Sentence() 
+    {
+	this.pos = PosFabrique.getPos();
+    }
+    
     /**
-     * Adds word to the end of sentence
+     * Adds parsed word to the end of sentence
      * @param word
      */
-    public void appendWord(String word)
+    public void appendWord(IWord word)
     {
-	
+	this.words.add(word);
     }
 
     /**
@@ -40,7 +50,8 @@ public class Sentence implements ISentence
      */
     public void parseSentence(String sentence)
     {
-	
+	ISentence tmp = this.pos.parseSentence(sentence);
+	this.words = tmp.getParsedSentence();
     }
 
     /**
@@ -49,7 +60,7 @@ public class Sentence implements ISentence
      */
     public IWord getRootWord()
     {
-	return null;
+	throw new UnsupportedOperationException("Not supported yet.");
     }
     
     /**
@@ -58,7 +69,7 @@ public class Sentence implements ISentence
      */
     public List<IWord> getParsedSentence()
     {
-	return null;
+	return this.words;
     }
     
     /**
@@ -67,6 +78,11 @@ public class Sentence implements ISentence
      */
     public String getMalttabSentence()
     {
-	return null;
+	throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void appendWord(String word)
+    {
+	throw new UnsupportedOperationException("Not supported yet.");
     }
 }

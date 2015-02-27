@@ -91,6 +91,10 @@ public class JMystem implements IPos
      */
     private ISentence createSentence(List<JsonWord> sent)
     {
+	for (JsonWord entry : sent)
+	{
+	    System.out.println(entry.text);	    
+	}
 	return null;
     }
 

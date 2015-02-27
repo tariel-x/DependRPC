@@ -31,6 +31,12 @@ public interface ISentence
      * @param word
      */
     public void appendWord(String word);
+    
+    /**
+     * Appends parsed word to the end of sentence
+     * @param word 
+     */
+    public void appendWord(IWord word);
 
     /**
      * Parses sentence into words
