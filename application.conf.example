@@ -7,5 +7,11 @@
 	"models" : 
 	{
 		"english" : "model/engmalt.linear-1.7.mco"
+	},
+	"lemmatiser" : 
+	{
+		"path" : "executable",
+		"params" : [],
+		"name" : "mystem"
 	}
 }

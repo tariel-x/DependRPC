@@ -59,7 +59,7 @@ public class JMystem implements IPos
     {
 	String readyJson = new String();
 	try {
-	    Process process = new ProcessBuilder("./mystem", "-i", "--format=json").start();
+	    Process process = new ProcessBuilder(this.executable, "-i", "--format=json").start();
 	    InputStream is = process.getInputStream();
 	    OutputStream os = process.getOutputStream();
 	    InputStreamReader isr = new InputStreamReader(is, "UTF-8");
