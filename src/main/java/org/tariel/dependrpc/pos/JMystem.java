@@ -24,6 +24,8 @@ import java.lang.reflect.Method;
 
 import com.google.gson.*;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.IWord;
 import org.tariel.dependrpc.containers.MalttabWord;
@@ -108,10 +110,25 @@ public class JMystem implements IPos
 	    IWord tmpWord = new MalttabWord(entry.text);
 	    tmpWord.setLex(entry.analysis.lex);
 	    String[] gr = entry.analysis.gr.split(",");
+	    //Clear array from "=" symbols
+	    int index = 0;
+	    for (String grstr : gr)
+	    {
+		if (grstr.contains("="))
+		{
+		    String[] eqSymParts = grstr.split("=");
+		    grstr = eqSymParts[0];
+		    gr = (String[])ArrayUtils.remove(gr, index);
+		    gr = (String[])ArrayUtils.addAll(gr, eqSymParts);
+		}
+		index++;
+	    }
+	    //Parse array into IWord instance
 	    for (String grstr : gr)
 	    {
 		try
 		{
+		    //Recogise current mystem propertie and set such one in IWord
 		    for (Field field : IWord.class.getDeclaredFields())
 		    {
 			List<String> values = Arrays.asList((String[])field.get(tmpWord));
@@ -125,6 +142,7 @@ public class JMystem implements IPos
 		{
 		    ex.printStackTrace();
 		}
+		
 	    }
 	    sentence.appendWord(tmpWord);
 	}
