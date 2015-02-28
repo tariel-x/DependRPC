@@ -19,13 +19,15 @@ package org.tariel.dependrpc.pos;
 
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
 
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.IWord;
+import org.tariel.dependrpc.containers.MalttabWord;
+import org.tariel.dependrpc.containers.Sentence;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -52,13 +54,14 @@ public class JMystem implements IPos
      */
     public IWord parseWord(String word)
     {
-	return null;
+	throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public ISentence parseSentence(String sentence)
     {
 	String readyJson = new String();
-	try {
+	try
+	{
 	    Process process = new ProcessBuilder(this.executable, "-i", "--format=json").start();
 	    InputStream is = process.getInputStream();
 	    OutputStream os = process.getOutputStream();
@@ -66,24 +69,27 @@ public class JMystem implements IPos
 	    OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 	    BufferedWriter bw = new BufferedWriter(osw);
 	    BufferedReader br = new BufferedReader(isr);
-	    bw.write("Эта хорошая лиса.");
+	    bw.write(sentence);
 	    bw.close();
 	    String line = new String();
 
-	    while ((line = br.readLine()) != null) {
-		if (!line.isEmpty()) {
+	    while ((line = br.readLine()) != null)
+	    {
+		if (!line.isEmpty())
+		{
 		    readyJson = line;
 		}
 		System.out.println(line);
 	    }
 
-	} catch (IOException ex) {
+	} catch (IOException ex)
+	{
 	    ex.printStackTrace();
 	}
 	List<JsonWord> sent = this.processJsonOutput(readyJson);
 	return this.createSentence(sent);
     }
-    
+
     /**
      * Converts temp words list into ISentence
      * @param sent List<JsonWord> list of parsed words from mystem
@@ -91,13 +97,40 @@ public class JMystem implements IPos
      */
     private ISentence createSentence(List<JsonWord> sent)
     {
+	ISentence sentence = new Sentence();
 	for (JsonWord entry : sent)
 	{
-	    System.out.println(entry.text);	    
+	    Class cls = IWord.class;
+	    Class[] paramString = new Class[1];	
+	    paramString[0] = String.class;
+	    
+	    System.out.println(entry.text);
+	    IWord tmpWord = new MalttabWord(entry.text);
+	    tmpWord.setLex(entry.analysis.lex);
+	    String[] gr = entry.analysis.gr.split(",");
+	    for (String grstr : gr)
+	    {
+		try
+		{
+		    for (Field field : IWord.class.getDeclaredFields())
+		    {
+			List<String> values = Arrays.asList((String[])field.get(tmpWord));
+			if ( values.contains(grstr) )
+			{
+			    Method method = cls.getDeclaredMethod("set" + field.getName(), paramString);
+			    method.invoke(tmpWord, grstr);
+			}
+		    }
+		} catch (Exception ex)
+		{
+		    ex.printStackTrace();
+		}
+	    }
+	    sentence.appendWord(tmpWord);
 	}
-	return null;
+	return sentence;
     }
-
+    
     /**
      * Parses mystem output into temp word instances
      * @param in Mystem JSON Sentence
@@ -155,12 +188,14 @@ public class JMystem implements IPos
  */
 class JsonAnalysis
 {
+
     public String lex;
     public String gr;
 }
 
 class JsonWord
 {
+
     public JsonAnalysis analysis;
     public String text;
 }

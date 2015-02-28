@@ -18,8 +18,10 @@
 
 package org.tariel.dependrpc.containers;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.tariel.dependrpc.pos.IPos;
+import org.tariel.dependrpc.pos.JMystem;
 import org.tariel.dependrpc.pos.PosFabrique;
 
 /**
@@ -33,7 +35,9 @@ public class Sentence implements ISentence
     
     public Sentence() 
     {
-	this.pos = PosFabrique.getPos();
+//	this.pos = PosFabrique.getPos();
+	this.pos = new JMystem();
+	this.words = new ArrayList<IWord>();
     }
     
     /**

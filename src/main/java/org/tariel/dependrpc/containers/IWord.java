@@ -23,11 +23,86 @@ package org.tariel.dependrpc.containers;
  */
 public interface IWord
 {
+
+    public final String[] Pos =
+    {
+	"A", "ADV", "ADVPRO", "ANUM",
+	"APRO", "COM", "CONJ", "INTJ", "NUM", "PART", "PR", "S",
+	"SPRO", "V"
+    };
+    
+    public final String[] Tense = 
+    {
+	"наст", "непрош", "прош"
+    };
+    
+    public final String[] Case = 
+    {
+	"род", "дат", "вин", "твор", "пр", "парт", "местн", "зват"
+    };
+    
+    public final String[] Number = 
+    {
+	"ед", "мн"
+    };
+    
+    public final String[] VerbRepr = 
+    {
+	"деепр", "инф", "прич", "изъяв", "пов"
+    };
+    
+    public final String[] AdjForm = 
+    {
+	"кр", "полн", "притяж"
+    };
+    
+    public final String[] AdjDegree = 
+    {
+	"прев", "срав"
+    };
+    
+    public final String[] VerbFace = 
+    {
+	"1-л", "2-л", "3-л"
+    };
+    
+    public final String[] Gender = 
+    {
+	"муж", "жен", "сред"
+    };
+    
+    public final String[] Aspect = 
+    {
+	"несов", "сов"
+    };
+    
+    public final String[] Voice = 
+    {
+	"действ", "страд"
+    };
+    
+    public final String[] Animacy = 
+    {
+	"од", "неод"
+    };
+    
+    public final String[] Transitivity = 
+    {
+	"пе", "нп"
+    };
+    
+    public final String[] AdditionalInfo = 
+    {
+	"гео", "затр", "имя", "искаж", "мж", "обсц", "отч", "прдк", "разг",
+	"редк", "сокр", "устар", "фам"
+    };
+    
+
     /**
-     * Creates malttab category string
-     * @return comma-separated malltab word characteristicks
+     * Creates formatted category string, ie malttab
+     * @return formatted word characteristicks
      */
-    public String getMalttabCategory();
+    public String getFormattedCategory();
 
     /**
      * Get origin word
@@ -70,4 +145,36 @@ public interface IWord
     public String getTransitivity();
 
     public String getAdditionalInfo();
+
+    public void setLex(String value);
+
+    public void setPos(String value);
+
+    public void setTense(String value);
+
+    public void setCase(String value);
+
+    public void setNumber(String value);
+
+    public void setVerbRepr(String value);
+
+    public void setVerbMood(String value);
+
+    public void setAdjForm(String value);
+
+    public void setAdjDegree(String value);
+
+    public void setVerbFace(String value);
+
+    public void setGender(String value);
+
+    public void setAspect(String value);
+
+    public void setVoice(String value);
+
+    public void setAnimacy(String value);
+
+    public void setTransitivity(String value);
+
+    public void setAdditionalInfo(String value);
 }
