@@ -17,6 +17,7 @@
  */
 package org.tariel.dependrpc;
 
+import java.util.*;
 import org.tariel.dependrpc.server.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.apache.thrift.server.TServer;
@@ -32,7 +33,7 @@ import org.apache.thrift.transport.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tariel.dependrpc.containers.ISentence;
-import org.tariel.dependrpc.containers.Sentence;
+import org.tariel.dependrpc.containers.MalttabSentence;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -120,8 +121,15 @@ public class App
 	}
 	else
 	{
-	    ISentence sentence = new Sentence();
-	    sentence.parseSentence("Двор был обширный, в глубине  стоял  дом  из  толстых  бревен,  а  перед   домом   красовался приземистый   необъятный   дуб,   широкий,  плотный,  с  густой  кроной заслоняющей крышу.");
+	    ISentence sentence = new MalttabSentence();
+	    sentence.parseSentence("Госдума приняла в первом чтении законопроект вводящий уголовную ответственность за оскорбление религиозных чувств и убеждений.");
+	    ServiceTest test = new ServiceTest();
+	    List<String> text = test.ParseText("russian", Arrays.asList(sentence.getFormattedSentence().split("\n")));
+	    for (String string : text)
+	    {
+		System.out.println(string);
+	    }
+	    
 	}
     }
 

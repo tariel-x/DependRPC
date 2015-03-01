@@ -56,8 +56,8 @@ public interface ISentence
     public List<IWord> getParsedSentence();
     
     /**
-     * Creates Malttab-formatted sentence string.
+     * Creates Parser-formatted sentence string.
      * @return malttab string
      */
-    public String getMalttabSentence();
+    public String getFormattedSentence();
 }

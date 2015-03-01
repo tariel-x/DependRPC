@@ -15,8 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package org.tariel.dependrpc.containers;
+
+import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -24,6 +28,7 @@ package org.tariel.dependrpc.containers;
  */
 public class MalttabWord implements IWord
 {
+
     private String word;
     private String lex;
     private String pos;
@@ -41,18 +46,100 @@ public class MalttabWord implements IWord
     private String animacity;
     private String transitivity;
     private String addditionalinfo;
-    
-    public MalttabWord() {}
-    
-    
-    public MalttabWord(String word) 
+
+    private final Map<String, String> Translations = new HashMap<String, String>()
+    {
+	{
+	    put("A", "A");
+	    put("ADV", "ADV");
+	    put("ADVPRO", "ADV");
+	    put("ANUM", "A");
+	    put("APRO", "A");
+	    put("COM", "COM");
+	    put("CONJ", "CONJ");
+	    put("INTJ", "INTJ");
+	    put("NUM", "NUM");
+	    put("PART", "PART");
+	    put("PR", "PR");
+	    put("S", "S");
+	    put("SPRO", "S");
+	    put("прич", "VADJ");
+	    put("деепр", "VADV");
+	    put("V", "V");
+	    put("ед", "sg");
+	    put("мн", "pl");
+	    put("жен", "f");
+	    put("муж", "m");
+	    put("сред", "n");
+	    put("им", "nom");
+	    put("род", "gen");
+	    put("дат", "dat");
+	    put("вин", "acc");
+	    put("твор", "ins");
+	    put("пр", "prep");
+	    put("парт", "gen2");
+	    put("местн", "loc");
+	    put("од", "anim");
+//	    put("неод", "inan");
+	    put("инф", "VINF");
+//	    put("прош", "pst");
+//	    put("непрош", "npst");
+	    put("наст", "prs");
+	    put("1-л", "1p");
+	    put("2-л", "2p");
+	    put("3-л", "3p");
+	    put("изъяв", "real");
+	    put("пов", "imp");
+	    put("кр", "shrt");
+//	    put("несов", "imperf");
+//	    put("сов", "perf");
+	    put("страд", "pass");
+	    put("срав", "comp");
+	    put("прев", "supl");
+	}
+    };
+
+    public MalttabWord()
+    {
+    }
+
+    public MalttabWord(String word)
     {
 	this.word = word;
     }
-    
+
     public String getFormattedCategory()
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	List<String> translations = new ArrayList<String>();
+	for (Field field : MalttabWord.class.getDeclaredFields())
+	{
+	    if (field.getType() == String.class && field.getModifiers() == Modifier.PRIVATE)
+	    {
+		try
+		{
+		    if (this.Translations.containsKey((String) field.get(this)))
+		    {
+			translations.add(this.Translations.get((String) field.get(this)));
+		    }
+		} catch (Exception ex)
+		{
+		    ex.printStackTrace();
+		}
+	    }
+	}
+	//Some magic!
+	if (translations.contains("VADJ"))
+	{
+	    translations.remove("VADJ");
+	    translations.set(translations.indexOf("V"), "VADJ");
+	}
+	if (translations.contains("VADV"))
+	{
+	    translations.remove("VADV");
+	    translations.set(translations.indexOf("V"), "VADV");
+	}
+	
+	return this.word + "\t" + StringUtils.join(translations, ".");
     }
 
     public String getWord()
@@ -235,5 +322,5 @@ public class MalttabWord implements IWord
     {
 	this.addditionalinfo = value;
     }
-    
+
 }

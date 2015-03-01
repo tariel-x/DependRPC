@@ -20,6 +20,7 @@ package org.tariel.dependrpc.containers;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.tariel.dependrpc.pos.IPos;
 import org.tariel.dependrpc.pos.JMystem;
 import org.tariel.dependrpc.pos.PosFabrique;
@@ -28,12 +29,12 @@ import org.tariel.dependrpc.pos.PosFabrique;
  *
  * @author Nikita Gerasimov <n@tariel.ru>
  */
-public class Sentence implements ISentence
+public class MalttabSentence implements ISentence
 {
     private List<IWord> words;
     private IPos pos;
     
-    public Sentence() 
+    public MalttabSentence() 
     {
 //	this.pos = PosFabrique.getPos();
 	this.pos = new JMystem();
@@ -80,9 +81,15 @@ public class Sentence implements ISentence
      * Creates Malttab-formatted sentence string.
      * @return malttab string
      */
-    public String getMalttabSentence()
+    public String getFormattedSentence()
     {
-	throw new UnsupportedOperationException("Not supported yet.");
+	List<String> words = new ArrayList<String>();
+	for (IWord word : this.words)
+	{
+	    words.add(word.getFormattedCategory());
+	}
+	String result = StringUtils.join(words, "\n");
+	return result;
     }
 
     public void appendWord(String word)

@@ -29,7 +29,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.IWord;
 import org.tariel.dependrpc.containers.MalttabWord;
-import org.tariel.dependrpc.containers.Sentence;
+import org.tariel.dependrpc.containers.MalttabSentence;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -99,7 +99,7 @@ public class JMystem implements IPos
      */
     private ISentence createSentence(List<JsonWord> sent)
     {
-	ISentence sentence = new Sentence();
+	ISentence sentence = new MalttabSentence();
 	for (JsonWord entry : sent)
 	{
 	    Class cls = IWord.class;
