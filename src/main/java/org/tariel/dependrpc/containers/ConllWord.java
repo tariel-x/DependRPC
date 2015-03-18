@@ -86,10 +86,10 @@ public class ConllWord implements IWord
 	    put("парт", "gen2");
 	    put("местн", "loc");
 	    put("од", "anim");
-//	    put("неод", "inan");
+	    put("неод", "inan");
 	    put("инф", "VINF");
-//	    put("прош", "pst");
-//	    put("непрош", "npst");
+	    put("прош", "pst");
+	    put("непрош", "npst");
 	    put("наст", "prs");
 	    put("1-л", "1p");
 	    put("2-л", "2p");
@@ -97,14 +97,20 @@ public class ConllWord implements IWord
 	    put("изъяв", "real");
 	    put("пов", "imp");
 	    put("кр", "shrt");
-//	    put("несов", "imperf");
-//	    put("сов", "perf");
+	    put("несов", "imperf");
+	    put("сов", "perf");
 	    put("страд", "pass");
 	    put("срав", "comp");
 	    put("прев", "supl");
 	}
     };
     
+    public ConllWord() {}
+
+    public ConllWord(String word)
+    {
+	this.word = word;
+    }
     
     @Override
     public String getFormattedCategory()
@@ -131,7 +137,9 @@ public class ConllWord implements IWord
 	{
 	    try
 	    {
-		translations.add((String)ConllWord.class.getField(fieldName).get(this));
+		String val = (String)ConllWord.class.getDeclaredField(fieldName).get(this);
+		if (!StringUtils.equals(this.Translations.get(val), null))
+		    translations.add(this.Translations.get(val).toUpperCase());
 	    }
 	    catch (NoSuchFieldException | IllegalAccessException ex)
 	    {
@@ -139,7 +147,22 @@ public class ConllWord implements IWord
 	    }
 	}
 	
-	return this.word + "\t" + StringUtils.join(translations, ".");
+	//Some magic!
+	if (translations.contains("VADJ") && translations.contains("V"))
+	{
+	    translations.remove("VADJ");
+	    translations.set(translations.indexOf("V"), "VADJ");
+	}
+	if (translations.contains("VADV") && translations.contains("V"))
+	{
+	    translations.remove("VADV");
+	    translations.set(translations.indexOf("V"), "VADV");
+	}
+	String feats = String.join("|", translations);
+	if (feats.equals(""))
+	    feats = "";
+	return this.word + "\t" + this.lex + "\t" + this.pos + "\t" + this.pos 
+		+ "\t" + feats;
 	
     }
 

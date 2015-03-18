@@ -18,7 +18,11 @@
 
 package org.tariel.dependrpc.containers;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.tariel.dependrpc.pos.IPos;
+import org.tariel.dependrpc.pos.JMystem;
 
 /**
  *
@@ -26,23 +30,33 @@ import java.util.List;
  */
 public class ConllSentence implements ISentence
 {
+    private List<IWord> words;
+    private IPos pos;
+    
+    public ConllSentence() 
+    {
+//	this.pos = PosFabrique.getPos();
+	this.pos = new JMystem();
+	this.words = new ArrayList<IWord>();
+    }
 
     @Override
     public void appendWord(String word)
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void appendWord(IWord word)
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	this.words.add(word);
     }
 
     @Override
     public void parseSentence(String sentence)
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	ISentence tmp = this.pos.parseSentence(sentence);
+	this.words = tmp.getParsedSentence();
     }
 
     @Override
@@ -54,13 +68,23 @@ public class ConllSentence implements ISentence
     @Override
     public List<IWord> getParsedSentence()
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	return this.words;
     }
 
     @Override
     public String getFormattedSentence()
     {
-	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	List<String> words = new ArrayList<String>();
+	int i = 1;
+	for (IWord word : this.words)
+	{
+	    String formatted = word.getFormattedCategory();
+	    if (!formatted.trim().equals(""))
+		words.add(String.valueOf(i) + "\t" + word.getFormattedCategory());
+	    i++;
+	}
+	String result = StringUtils.join(words, "\n");
+	return result;
     }
     
 }
