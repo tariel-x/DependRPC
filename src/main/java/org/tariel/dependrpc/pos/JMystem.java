@@ -80,7 +80,6 @@ public class JMystem implements IPos
 		{
 		    readyJson = line;
 		}
-		System.out.println(line);
 	    }
 
 	} catch (IOException ex)
@@ -105,7 +104,6 @@ public class JMystem implements IPos
 	    Class[] paramString = new Class[1];	
 	    paramString[0] = String.class;
 	    
-	    System.out.println(entry.text);
 	    IWord tmpWord = SentenceFabrique.getWord(entry.text);
 	    tmpWord.setLex(entry.analysis.lex);
 	    String[] gr = entry.analysis.gr.split(",");
