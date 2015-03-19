@@ -25,7 +25,6 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 
-import org.apache.thrift.*;
 import org.apache.thrift.protocol.*;
 import org.apache.thrift.server.*;
 import org.apache.thrift.transport.*;
@@ -33,7 +32,6 @@ import org.apache.thrift.transport.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tariel.dependrpc.containers.ISentence;
-import org.tariel.dependrpc.containers.MalttabSentence;
 import org.tariel.dependrpc.containers.SentenceFabrique;
 import org.tariel.jsonconfig.JsonConfig;
 
@@ -43,9 +41,9 @@ import org.tariel.jsonconfig.JsonConfig;
  */
 public class App
 {
-    private static Logger log = LoggerFactory.getLogger(App.class);
+    private final static Logger log = LoggerFactory.getLogger(App.class);
 
-    private final static Boolean DEBUG = true;
+    private static Boolean DEBUG = true;
 
     public static class ServerThread implements Runnable
     {
@@ -60,6 +58,7 @@ public class App
 	    port = portNum;
 	}
 
+	@Override
 	public void run()
 	{
 	    try
@@ -106,6 +105,7 @@ public class App
     {
 	JsonConfig.init("application.conf");
 	log.info("Config loaded");
+	App.DEBUG = JsonConfig.get("debug").asBool();
 	if (App.DEBUG == false)
 	{
 	    //org.apache.log4j.BasicConfigurator.configure();
@@ -123,14 +123,11 @@ public class App
 	else
 	{
 	    ISentence sentence = SentenceFabrique.getSentence();
-	    sentence.parseSentence("Госдума приняла в первом чтении законопроект вводящий уголовную ответственность за оскорбление религиозных чувств и убеждений.");
+	    sentence.parseSentence("Кот помахал нам лапой.");
 	    ServiceTest test = new ServiceTest();
-	    List<String> text = test.ParseText("russian", Arrays.asList(sentence.getFormattedSentence().split("\n")));
-	    for (String string : text)
-	    {
-		System.out.println(string);
-	    }
-	    
+	    List<String> text = test.ParseText(JsonConfig.get("modelname").asStr(), 
+		    Arrays.asList(sentence.getFormattedSentence().split("\n")));
+	    text.stream().forEach((string) -> System.out.println(string));
 	}
     }
 
