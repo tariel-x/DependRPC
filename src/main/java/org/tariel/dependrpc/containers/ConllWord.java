@@ -160,7 +160,7 @@ public class ConllWord implements IWord
 	}
 	String feats = String.join("|", translations);
 	if (feats.equals(""))
-	    feats = "";
+	    feats = "_";
 	return this.word + "\t" + this.lex + "\t" + this.pos + "\t" + this.pos 
 		+ "\t" + feats;
 	
