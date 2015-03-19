@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.MalttabSentence;
+import org.tariel.dependrpc.containers.SentenceFabrique;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -121,7 +122,7 @@ public class App
 	}
 	else
 	{
-	    ISentence sentence = new MalttabSentence();
+	    ISentence sentence = SentenceFabrique.getSentence();
 	    sentence.parseSentence("Госдума приняла в первом чтении законопроект вводящий уголовную ответственность за оскорбление религиозных чувств и убеждений.");
 	    ServiceTest test = new ServiceTest();
 	    List<String> text = test.ParseText("russian", Arrays.asList(sentence.getFormattedSentence().split("\n")));

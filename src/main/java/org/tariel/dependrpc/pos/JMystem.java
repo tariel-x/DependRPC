@@ -28,8 +28,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import org.tariel.dependrpc.containers.ISentence;
 import org.tariel.dependrpc.containers.IWord;
-import org.tariel.dependrpc.containers.MalttabWord;
-import org.tariel.dependrpc.containers.MalttabSentence;
+import org.tariel.dependrpc.containers.SentenceFabrique;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -99,7 +98,7 @@ public class JMystem implements IPos
      */
     private ISentence createSentence(List<JsonWord> sent)
     {
-	ISentence sentence = new MalttabSentence();
+	ISentence sentence = SentenceFabrique.getSentence();
 	for (JsonWord entry : sent)
 	{
 	    Class cls = IWord.class;
@@ -107,7 +106,7 @@ public class JMystem implements IPos
 	    paramString[0] = String.class;
 	    
 	    System.out.println(entry.text);
-	    IWord tmpWord = new MalttabWord(entry.text);
+	    IWord tmpWord = SentenceFabrique.getWord(entry.text);
 	    tmpWord.setLex(entry.analysis.lex);
 	    String[] gr = entry.analysis.gr.split(",");
 	    //Clear array from "=" symbols
