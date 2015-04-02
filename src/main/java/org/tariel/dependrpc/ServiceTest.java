@@ -31,6 +31,8 @@ import org.maltparser.concurrent.ConcurrentMaltParserModel;
 import org.tariel.dependrpc.server.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tariel.dependrpc.containers.ISentence;
+import org.tariel.dependrpc.containers.SentenceFabrique;
 import org.tariel.jsonconfig.JsonConfig;
 
 /**
@@ -57,9 +59,11 @@ public class ServiceTest
      * @param text one sentence
      * @return list of CoNLL strings
      */
-    public List<String> ParseText(String language, List<String> text)
+    public List<String> ParseText(String language, String text)
     {
-	String[] tokens = text.toArray(new String[text.size()]);
+	ISentence sentence = SentenceFabrique.getSentence();
+	sentence.parseSentence(text);
+	String[] tokens = sentence.getFormattedSentence().split("\n");
 	//ConcurrentDependencyGraph outputGraph = null;
 	String[] outputTokens = null;
 	try {

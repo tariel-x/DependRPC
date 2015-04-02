@@ -23,6 +23,7 @@
  */
 namespace cpp dependrpc.server
 namespace java org.tariel.dependrpc.server
+//namespace java models.client
 namespace php dependrpc.server
 
 
@@ -40,6 +41,6 @@ service ParseServer {
 	
 	list<string> getServerInfo(),
 
-	list<string> ParseText(1: string language, 2: list<string> text),
+	list<string> ParseText(1: string language, 2: string text),
 
 }

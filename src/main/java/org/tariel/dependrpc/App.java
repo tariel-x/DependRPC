@@ -122,11 +122,9 @@ public class App
 	}
 	else
 	{
-	    ISentence sentence = SentenceFabrique.getSentence();
-	    sentence.parseSentence("Кот помахал нам лапой.");
 	    ServiceTest test = new ServiceTest();
 	    List<String> text = test.ParseText(JsonConfig.get("modelname").asStr(), 
-		    Arrays.asList(sentence.getFormattedSentence().split("\n")));
+		    "Кот помахал нам лапой.");
 	    text.stream().forEach((string) -> System.out.println(string));
 	}
     }
